@@ -77,6 +77,7 @@ void* CHeapManager::Alloc(int size)
 	pages[getEndPageIndex(foundBlock.second, realSize)]++;
 
 	allocatedBlocks[foundBlock.second] = std::make_pair(realSize, size);
+	allocatedLogs[foundBlock.second] = std::make_pair(__FILE__, __LINE__);
 
 	*static_cast<int*>(foundBlock.second) = specialValue;
 	*static_cast<int*>(movePtr(foundBlock.second, sizeof(int) + size)) = specialValue;
@@ -121,6 +122,7 @@ void CHeapManager::Free(void* blockPtr)
 	pages[getStartPageIndex(blockPtr)]--;
 	pages[getEndPageIndex(blockPtr, realBlockSize)]--;
 	allocatedBlocks.erase(hashIterator);
+	allocatedLogs.erase(blockPtr);
 
 	mergeBlockPtr(blockPtr, realBlockSize);
 	decommitMemory(blockPtr, realBlockSize);
@@ -130,8 +132,7 @@ void CHeapManager::checkBorders(void* blockPtr, int blockSize)
 {
 	if (*static_cast<int*>(blockPtr) != specialValue || *static_cast<int*>(movePtr(blockPtr, sizeof(int) + blockSize)) != specialValue) {
 
-		
-		std::cout << "Memory bound error! address: " << blockPtr << " " << __FILE__ << " " << __LINE__ << std::endl;
+		std::cout << "Memory bound error! address: " << blockPtr << " " << allocatedLogs[blockPtr].first << " " << allocatedLogs[blockPtr].second << std::endl;
 	}
 }
 

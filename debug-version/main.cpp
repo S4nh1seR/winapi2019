@@ -1,5 +1,6 @@
 #include "HeapManager.h"
 #include "Objects.h"
+#include <iostream>
 
 int main()
 {	

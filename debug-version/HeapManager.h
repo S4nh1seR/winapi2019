@@ -29,7 +29,9 @@ private:
 	std::map<void*, int> commitedBlocksByPtr;
 
 	std::unordered_map<void*, std::pair<int, int>> allocatedBlocks;
-
+	
+	std::unordered_map<void*, std::pair<const char*, int>> allocatedLogs;
+	
 	std::vector<int> pages;
 
 	static const int pageSize = 4096;
